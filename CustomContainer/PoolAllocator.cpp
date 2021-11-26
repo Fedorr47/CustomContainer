@@ -6,13 +6,11 @@
 
 #include "PoolAllocator.h"
 
-PoolAllocator::PoolAllocator(const size_t InTotalAllocSize, const size_t InChunckSize) :
+PoolAllocator::PoolAllocator(const size_t InTotalAllocSize) :
 	Allocator{ InTotalAllocSize },
 	mStartPointer{ nullptr },
-	mChunckSize{ InChunckSize }
+	mChunckSize{ 0 }
 {
-	assert(InChunckSize >= 8 && "Chunk size must be greater or equal to 8");
-	assert(mTotalAllocSize % mChunckSize == 0 && "Total Size must be a multiple of Chunk Size");
 }
 
 void PoolAllocator::Init()
@@ -22,6 +20,18 @@ void PoolAllocator::Init()
 		free(mStartPointer);
 	}
 	mStartPointer = malloc(mTotalAllocSize);
+	Reset();
+}
+
+void PoolAllocator::Init(const size_t InChunckSize)
+{
+	if (mStartPointer != nullptr)
+	{
+		free(mStartPointer);
+	}
+	mTotalAllocSize = mTotalAllocSize + (sizeof(Node) * mTotalAllocSize / mChunckSize);
+	mStartPointer = malloc(mTotalAllocSize);
+	Reset();
 }
 
 PoolAllocator::~PoolAllocator()
@@ -30,6 +40,17 @@ PoolAllocator::~PoolAllocator()
 	{
 		free(mStartPointer);
 	}
+}
+
+void* PoolAllocator::GetData()
+{
+	void* lCurrentPointer = mStartPointer;
+	if (lCurrentPointer != nullptr)
+	{
+		size_t lCurrentPointerInt = reinterpret_cast<size_t>(lCurrentPointer) + mUsed;
+		lCurrentPointer = reinterpret_cast<void*>(lCurrentPointerInt);
+	}
+	return lCurrentPointer;
 }
 
 void* PoolAllocator::Allocate(const size_t InAllocSize, const size_t InAligment)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <memory.h>
 #include "Allocator.h"
 
 #define FORCE_INLINE __forceinline
@@ -13,15 +14,20 @@ public:
 	using ElementType = TElementType;
 	using Allocator = TAllocator;
 
-	FORCE_INLINE FArray() :
+	FORCE_INLINE explicit FArray(size_t InElementCount) :
 		mNum{0},
 		mMax{0}
 	{
+		size_t lAllocSize = sizeof(ElementType) * InElementCount;
+		mAllocatorInstance = std::make_unique<Allocator>(lAllocSize);
+		mAllocatorInstance->Init();
+		mMax = InElementCount;
 	}
 
-	FORCE_INLINE const ElementType* GetData() const
+	FORCE_INLINE const ElementType GetData() const
 	{
-		return reinterpret_cast<ElementType>(mAllocatorInstance.GetData());
+		ElementType* ptrElement = reinterpret_cast<ElementType>(mAllocatorInstance->GetData());
+		return *ptrElement;
 	}
 
 	FORCE_INLINE const size_t GetTypeSize() const
@@ -34,7 +40,7 @@ public:
 		return mMax - mNum;
 	}
 
-	FORCE_INLINE bool IsValidIndex(int32 InIndex) const
+	FORCE_INLINE bool IsValidIndex(size_t InIndex) const
 	{
 		return InIndex >= 0 && InIndex < mNum;
 	}
@@ -43,7 +49,7 @@ public:
 	{}
 
 protected:
-	Allocator mAllocatorInstance;
+	std::unique_ptr<Allocator> mAllocatorInstance;
 	size_t mNum;
 	size_t mMax;
 };

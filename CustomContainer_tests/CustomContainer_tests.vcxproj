@@ -40,10 +40,15 @@
     <IncludePath>..\CustomContainer;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="FArrayTests.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PoolAllocatorTests.h" />
     <ClInclude Include="StackAllocatorTest.h" />
+    <ClInclude Include="UtilsTests.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FArrayTests.cpp" />
+    <ClCompile Include="PoolAllocatorTests.cpp" />
     <ClCompile Include="StackAllocatorTest.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

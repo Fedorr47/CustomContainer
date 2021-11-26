@@ -16,12 +16,13 @@ protected:
 	StackLinkedList<FreeHeader> mFreeBlocksList;	
 
 public:
-	PoolAllocator(const size_t InTotalAllocSize, const size_t InChunckSize);
+	PoolAllocator(const size_t InTotalAllocSize);
 	virtual ~PoolAllocator();
 
 	void* Allocate(const size_t InAllocSize, const size_t InAligment) override;
 	void Free(void* InPointer) override;
 	void Init() override;
-	void* GetData() override { return nullptr; };
+	void Init(const size_t InChunckSize);
+	void* GetData() override;
 	void Reset();
 };

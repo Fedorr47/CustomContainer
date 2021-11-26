@@ -10,8 +10,8 @@ public:
 		Node* next;
 	};
 
-	Node* head;
-
+	Node* head = nullptr;
+	
 	StackLinkedList() = default;
 	void push(Node* InNode)
 	{
