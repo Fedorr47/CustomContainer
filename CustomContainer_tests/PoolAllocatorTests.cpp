@@ -3,8 +3,8 @@
 #include "PoolAllocatorTests.h"
 
 TEST(PoolAllocatorTests, CreatePoolAllocator) {
-	PoolAllocator tStacAllocator(1*8, 8);
-	tStacAllocator.Init();
+	PoolAllocator tStacAllocator(8);
+	tStacAllocator.Init<int>();
 	int* ptrStartPointer = reinterpret_cast<int*>(tStacAllocator.GetData());
 	EXPECT_TRUE(ptrStartPointer != nullptr);
 }

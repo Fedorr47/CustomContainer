@@ -13,27 +13,6 @@ PoolAllocator::PoolAllocator(const size_t InTotalAllocSize) :
 {
 }
 
-void PoolAllocator::Init()
-{
-	if (mStartPointer != nullptr)
-	{
-		free(mStartPointer);
-	}
-	mStartPointer = malloc(mTotalAllocSize);
-	Reset();
-}
-
-void PoolAllocator::Init(const size_t InChunckSize)
-{
-	if (mStartPointer != nullptr)
-	{
-		free(mStartPointer);
-	}
-	mTotalAllocSize = mTotalAllocSize + (sizeof(Node) * mTotalAllocSize / mChunckSize);
-	mStartPointer = malloc(mTotalAllocSize);
-	Reset();
-}
-
 PoolAllocator::~PoolAllocator()
 {
 	if (mStartPointer != nullptr)
@@ -76,7 +55,7 @@ void PoolAllocator::Free(void* InPointer)
 void PoolAllocator::Reset()
 {
 	mUsed = mPeak = 0;
-	const int ChunksCount = mTotalAllocSize / mChunckSize;
+	const size_t ChunksCount = mTotalAllocSize / (mChunckSize + sizeof(Node));
 	for (int i = 0; i < ChunksCount; ++i)
 	{
 		size_t lAddress = reinterpret_cast<size_t>(mStartPointer) + (i * mChunckSize);

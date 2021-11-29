@@ -21,8 +21,20 @@ public:
 
 	void* Allocate(const size_t InAllocSize, const size_t InAligment) override;
 	void Free(void* InPointer) override;
-	void Init() override;
-	void Init(const size_t InChunckSize);
+	void Init() override {};
 	void* GetData() override;
+
+	template <class ChunckType>
+	void Init()
+	{
+		if (mStartPointer != nullptr)
+		{
+			free(mStartPointer);
+		}
+		mChunckSize = sizeof(ChunckType);
+		mTotalAllocSize = mTotalAllocSize * (mChunckSize + sizeof(Node));
+		mStartPointer = malloc(mTotalAllocSize);
+		Reset();
+	}
 	void Reset();
 };
