@@ -14,7 +14,7 @@ TEST(FArrayTests, InitTestallocStructArray)
 	EXPECT_EQ(ptrTestAllocStructFArray.GetOffset(), 10);
 }
 
-TEST(FArrayTests, EmplaceTestallocStructArray)
+TEST(FArrayTests, EmplaceTestAllocStructArray)
 {
 	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
 	ptrTestAllocStructFArray.Emplace();
@@ -23,4 +23,34 @@ TEST(FArrayTests, EmplaceTestallocStructArray)
 	EXPECT_EQ(res.IntegerValue, 1);
 	EXPECT_EQ(res.FloatValue, 1.1f);
 	EXPECT_EQ(res.ShortString, "A");
+}
+
+TEST(FArrayTests, IteratorTestAllocStructArray)
+{
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	for (int i = 0; i < 10; ++i)
+	{
+		ptrTestAllocStructFArray.Emplace();
+	}
+	for (auto TestAllocInstance : ptrTestAllocStructFArray)
+	{
+		EXPECT_EQ(TestAllocInstance.BoolValue, true);
+		EXPECT_EQ(TestAllocInstance.IntegerValue, 1);
+		EXPECT_EQ(TestAllocInstance.FloatValue, 1.1f);
+		EXPECT_EQ(TestAllocInstance.ShortString, "A");
+	}
+}
+
+TEST(FArrayTests, RandomAccessesTestAllocStructArray)
+{
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	for (int i = 0; i < 10; ++i)
+	{
+		ptrTestAllocStructFArray.Emplace(i, 1.1f, false, "B", std::string(255, 'B'));
+	}
+
+	EXPECT_EQ(ptrTestAllocStructFArray[5].BoolValue, false);
+	EXPECT_EQ(ptrTestAllocStructFArray[5].IntegerValue, 5);
+	EXPECT_EQ(ptrTestAllocStructFArray[5].FloatValue, 1.1f);
+	EXPECT_EQ(ptrTestAllocStructFArray[5].ShortString, "B");
 }
