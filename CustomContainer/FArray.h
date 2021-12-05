@@ -3,7 +3,9 @@
 #include <assert.h>
 #include <memory.h>
 #include <utility>
+#include <initializer_list>
 #include "Allocator.h"
+#include "Utils.h"
 
 #define FORCE_INLINE __forceinline
 
@@ -54,6 +56,15 @@ public:
 		mAllocatorInstance->Init<ElementType>();
 		mMax = InElementCount;
 	}
+
+	FORCE_INLINE FArray(std::initializer_list<ElementType...> InList) {};
+
+	template <
+		class OtherElementType,
+		class OtherAllocator,
+		FArrayElementsAreCompatible T
+	>
+	FORCE_INLINE FArray(const FArray<OtherElementType, OtherAllocator>& InOther) {}
 
 	FORCE_INLINE ElementType* GetData() const
 	{
