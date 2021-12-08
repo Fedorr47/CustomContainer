@@ -75,3 +75,19 @@ TEST(FArrayTests, ContainsTestAllocStructArray)
 
 	EXPECT_TRUE(ptrTestAllocStructFArray.Contains(FifthElement));
 }
+
+TEST(FArrayTests, ClearTestAllocStructArray)
+{
+}
+
+TEST(FArrayTests, RemoveByindexTestAllocStructArray)
+{
+}
+
+TEST(FArrayTests, FindTestAllocStructArray)
+{
+}
+
+TEST(FArrayTests, SortAllocStructArray)
+{
+}
