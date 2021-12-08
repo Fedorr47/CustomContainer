@@ -57,7 +57,8 @@ public:
 		mMax = InElementCount;
 	}
 
-	FORCE_INLINE FArray(std::initializer_list<ElementType...> InList) {};
+
+	FORCE_INLINE FArray(std::initializer_list<ElementType> InList) {};
 
 	template <
 		class OtherElementType,
@@ -66,9 +67,15 @@ public:
 	>
 	FORCE_INLINE FArray(const FArray<OtherElementType, OtherAllocator>& InOther) {}
 
-	FORCE_INLINE ElementType* GetData() const
+	FORCE_INLINE ElementType* GetData()
 	{
 		ElementType* ptrElement = reinterpret_cast<ElementType*>(mAllocatorInstance->GetData());
+		return ptrElement;
+	}
+
+	FORCE_INLINE const ElementType* GetData() const
+	{
+		const ElementType* ptrElement = reinterpret_cast<const ElementType*>(mAllocatorInstance->GetData());
 		return ptrElement;
 	}
 
@@ -110,6 +117,24 @@ public:
 	FORCE_INLINE ElementType& operator[](size_t InIndex)
 	{
 		return GetData()[InIndex];
+	}
+
+	template <class ComporationType>
+	bool Contains(const ComporationType& Item) const
+	{
+		for (const ElementType* __restrict Data = GetData(), *__restrict DataEnd = Data + mNum; Data != DataEnd; ++Data)
+		{
+			if (*Data == Item)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void ClearAll()
+	{
+		
 	}
 
 	Iterator begin() { return Iterator(&GetData()[0]); }

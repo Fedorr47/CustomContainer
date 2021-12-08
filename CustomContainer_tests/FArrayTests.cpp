@@ -54,3 +54,24 @@ TEST(FArrayTests, RandomAccessesTestAllocStructArray)
 	EXPECT_EQ(ptrTestAllocStructFArray[5].FloatValue, 1.1f);
 	EXPECT_EQ(ptrTestAllocStructFArray[5].ShortString, "B");
 }
+
+TEST(FArrayTests, ContainsTestAllocStructArray)
+{
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	size_t SpecificElement = 5;
+	TestAllocStruct FifthElement(SpecificElement, 2.0f, true, "F", std::string(5, 'F'));
+
+	for (int i = 0; i < 10; ++i)
+	{
+		if (i == SpecificElement)
+		{
+			ptrTestAllocStructFArray.Emplace(FifthElement);
+		}
+		else
+		{
+			ptrTestAllocStructFArray.Emplace(i, 1.1f, false, "B", std::string(255, 'B'));
+		}
+	}
+
+	EXPECT_TRUE(ptrTestAllocStructFArray.Contains(FifthElement));
+}

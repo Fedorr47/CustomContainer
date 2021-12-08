@@ -4,7 +4,7 @@
 
 struct TestAllocStruct
 {
-	int IntegerValue;
+	int  IntegerValue;
 	float FloatValue;
 	bool BoolValue;
 	std::string ShortString;
@@ -34,3 +34,13 @@ struct TestAllocStruct
 		LongString = InLongString;
 	}
 };
+
+constexpr bool operator==(const TestAllocStruct& lhs, const TestAllocStruct& rhs)
+{
+	return	lhs.IntegerValue	== rhs.IntegerValue &&
+			lhs.FloatValue		== rhs.FloatValue &&
+			lhs.BoolValue		== rhs.BoolValue &&
+			lhs.ShortString		== rhs.ShortString &&
+			lhs.LongString		== rhs.LongString;
+}
+

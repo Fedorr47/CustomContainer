@@ -5,7 +5,6 @@
 
 int main()
 {
-	PoolAllocator poolAllocator(100);
-	poolAllocator.Init<int>();
+	FArray<int, PoolAllocator> a(10);
 	return 0;
 }

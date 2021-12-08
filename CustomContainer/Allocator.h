@@ -14,6 +14,8 @@ public:
 	virtual void Free(void* InPointer) = 0;
 	virtual void Init() = 0;
 	virtual void* GetData() = 0;
+	template <class T = void> 
+	void Init() {};
 
 protected:
 	size_t mTotalAllocSize;
