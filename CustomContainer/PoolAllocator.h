@@ -31,10 +31,14 @@ public:
 		{
 			free(mStartPointer);
 		}
-		mChunckSize = sizeof(ChunckType);
-		mTotalAllocSize = mTotalAllocSize * (mChunckSize + sizeof(Node));
+		mChunckSize = sizeof(ChunckType) + sizeof(Node);
+		mTotalAllocSize = mTotalAllocSize * mChunckSize;
 		mStartPointer = malloc(mTotalAllocSize);
 		Reset();
 	}
-	void Reset();
+	void Reset() override;
+
+	void* operator[](size_t idx) { 
+		return  reinterpret_cast<void*>(reinterpret_cast<size_t>(mStartPointer) + mChunckSize* idx);
+	}
 };

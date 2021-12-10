@@ -39,7 +39,7 @@ public:
 		FORCE_INLINE Iterator& operator++()
 		{ ++mPtr; return *this; }
 		FORCE_INLINE Iterator& operator++(int)
-		{ Iterator tmp = *this;  ++mPtr;  return tmp; }
+		{ Iterator tmp = *this; ++mPtr;  return tmp; }
 		FORCE_INLINE friend	bool operator==(const Iterator& first, const Iterator& second) { return first.mPtr == second.mPtr; }
 		FORCE_INLINE friend	bool operator!=(const Iterator& first, const Iterator& second) { return first.mPtr != second.mPtr; }
 	private:
@@ -108,19 +108,19 @@ public:
 	FORCE_INLINE size_t Emplace(ArgsType&& ...Args)
 	{
 		CheckInvariants();
-		const size_t lIndex = mNum;
-		new(GetData() + lIndex) ElementType(std::forward<ArgsType>(Args)...);
+		auto ptrAllocatedAddress = mAllocatorInstance->Allocate(GetTypeSize(), 0);
+		new(ptrAllocatedAddress) ElementType(std::forward<ArgsType>(Args)...);
 		++mNum;
-		return lIndex;
+		return mNum;
 	}
 
 	FORCE_INLINE ElementType& operator[](size_t InIndex)
 	{
-		return GetData()[InIndex];
+		return *(reinterpret_cast<const ElementType*>(mAllocatorInstance->));
 	}
 
 	template <class ComporationType>
-	bool Contains(const ComporationType& Item) const
+	FORCE_INLINE bool Contains(const ComporationType& Item) const
 	{
 		for (const ElementType* __restrict Data = GetData(), *__restrict DataEnd = Data + mNum; Data != DataEnd; ++Data)
 		{
@@ -132,10 +132,58 @@ public:
 		return false;
 	}
 
-	void ClearAll()
+	FORCE_INLINE void ClearAll()
 	{
-		
+		mAllocatorInstance->Reset();
+		mNum = 0;
 	}
+
+private:
+	template <class IsPositiveInteger>
+	void RemoveByIndexImpl(size_t InIndex, IsPositiveInteger InCount)
+	{
+		CheckInvariants();
+
+		while (InCount)
+		{
+			mAllocatorInstance->Free(GetData() + InIndex);
+			--InCount;
+			++InIndex;
+		}
+	}
+
+public:
+	template <class IsPositiveInteger>
+	FORCE_INLINE void RemoveByindex(size_t InIndex)
+	{
+		return RemoveByIndexImpl(InIndex, 1);
+	}
+
+
+	FORCE_INLINE size_t Find(const ElementType& InItem)
+	{
+		const ElementType* __restrict lStart = GetData();
+		for (const ElementType* __restrict Data = GetData(), *__restrict DataEnd = Data + mNum; Data != DataEnd; ++Data)
+		{
+			if (*Data == InItem)
+			{
+				return static_cast<size_t>(Data - lStart);
+			}
+		}
+		return INDEX_NONE;
+	}
+
+	FORCE_INLINE bool Find(const ElementType& InItem, size_t& OutIndex)
+	{
+		OutIndex = Find(InItem);
+		return OutIndex != INDEX_NONE;
+	}
+
+	void Sort()
+	{
+
+	}
+	
 
 	Iterator begin() { return Iterator(&GetData()[0]); }
 	Iterator end() { return Iterator(&GetData()[mMax]); }

@@ -23,18 +23,12 @@ PoolAllocator::~PoolAllocator()
 
 void* PoolAllocator::GetData()
 {
-	void* lCurrentPointer = mStartPointer;
-	if (lCurrentPointer != nullptr)
-	{
-		size_t lCurrentPointerInt = reinterpret_cast<size_t>(lCurrentPointer) + mUsed;
-		lCurrentPointer = reinterpret_cast<void*>(lCurrentPointerInt);
-	}
-	return lCurrentPointer;
+	return mStartPointer;
 }
 
 void* PoolAllocator::Allocate(const size_t InAllocSize, const size_t InAligment)
 {
-	assert(InAllocSize == this->mChunckSize && "Allocation size must be equal to chunk size");
+	assert(InAllocSize == mChunckSize - sizeof(Node) && "Allocation size must be equal to chunk size");
 
 	Node* pFreePosition = mFreeBlocksList.pop();
 
@@ -55,7 +49,11 @@ void PoolAllocator::Free(void* InPointer)
 void PoolAllocator::Reset()
 {
 	mUsed = mPeak = 0;
-	const size_t ChunksCount = mTotalAllocSize / (mChunckSize + sizeof(Node));
+	const size_t ChunksCount = mTotalAllocSize / mChunckSize;
+	while (mFreeBlocksList.head != nullptr)
+	{
+		mFreeBlocksList.pop();
+	}
 	for (int i = 0; i < ChunksCount; ++i)
 	{
 		size_t lAddress = reinterpret_cast<size_t>(mStartPointer) + (i * mChunckSize);
