@@ -23,6 +23,7 @@ public:
 	void Free(void* InPointer) override;
 	void Init() override {};
 	void* GetData() override;
+	size_t GetHeaderSize() override { return sizeof(Node); };
 
 	template <class ChunckType>
 	void Init()
@@ -37,8 +38,4 @@ public:
 		Reset();
 	}
 	void Reset() override;
-
-	void* operator[](size_t idx) { 
-		return  reinterpret_cast<void*>(reinterpret_cast<size_t>(mStartPointer) + mChunckSize* idx);
-	}
 };

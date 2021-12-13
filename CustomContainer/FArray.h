@@ -14,6 +14,8 @@ class FArray
 {
 private:
 
+	friend class Iterator;
+
 	using ElementType = TElementType;
 	using Allocator = TAllocator;
 	using ReferenceType = ElementType&;
@@ -21,7 +23,6 @@ private:
 	using ConstPointerType = const ElementType*;
 
 public:
-
 	struct Iterator
 	{
 		using iterator_category = std::random_access_iterator_tag;
@@ -30,23 +31,45 @@ public:
 		using pointer = ElementType*;
 		using reference = ElementType&;
 
-		Iterator(pointer InPtr) :
-			mPtr(InPtr)
+		Iterator(pointer InPtr, size_t InOffset = 0) :
+			mPtr(InPtr),
+			mOffset(InOffset)
 		{}
 
-		FORCE_INLINE reference operator*() const { return *mPtr; }
-		FORCE_INLINE pointer operator->() { return mPtr; }
+		FORCE_INLINE reference operator*() const 
+		{ 
+			return *mPtr; 
+		}
+		FORCE_INLINE pointer operator->() { 
+			return mPtr; 
+		}
 		FORCE_INLINE Iterator& operator++()
-		{ ++mPtr; return *this; }
+		{ 
+			++mPtr;
+			if (mOffset)
+			{
+				mPtr = reinterpret_cast<pointer>(reinterpret_cast<size_t>(mPtr) + mOffset);
+			}
+			return *this; 
+		}
 		FORCE_INLINE Iterator& operator++(int)
-		{ Iterator tmp = *this; ++mPtr;  return tmp; }
+		{ 
+			Iterator tmp = *this; 
+			++mPtr;
+			if (mOffset)
+			{
+				mPtr = reinterpret_cast<pointer>(reinterpret_cast<size_t>(mPtr) + mOffset);
+			}
+			return tmp; 
+		}
 		FORCE_INLINE friend	bool operator==(const Iterator& first, const Iterator& second) { return first.mPtr == second.mPtr; }
-		FORCE_INLINE friend	bool operator!=(const Iterator& first, const Iterator& second) { return first.mPtr != second.mPtr; }
+		FORCE_INLINE friend	bool operator!=(const Iterator& first, const Iterator& second) { 
+			return first.mPtr != second.mPtr; 
+		}
 	private:
 		pointer mPtr;
+		size_t mOffset;
 	};
-
-
 
 	FORCE_INLINE explicit FArray(size_t InElementCount) :
 		mNum{0},
@@ -69,14 +92,12 @@ public:
 
 	FORCE_INLINE ElementType* GetData()
 	{
-		ElementType* ptrElement = reinterpret_cast<ElementType*>(mAllocatorInstance->GetData());
-		return ptrElement;
+		return reinterpret_cast<ElementType*>(mAllocatorInstance->GetData());
 	}
 
 	FORCE_INLINE const ElementType* GetData() const
 	{
-		const ElementType* ptrElement = reinterpret_cast<const ElementType*>(mAllocatorInstance->GetData());
-		return ptrElement;
+		return reinterpret_cast<const ElementType*>(mAllocatorInstance->GetData());
 	}
 
 	FORCE_INLINE const size_t GetTypeSize() const
@@ -116,13 +137,14 @@ public:
 
 	FORCE_INLINE ElementType& operator[](size_t InIndex)
 	{
-		return *(reinterpret_cast<const ElementType*>(mAllocatorInstance->));
+		size_t ptrElementAddress = reinterpret_cast<size_t>(&GetData()[InIndex]) + (InIndex * mAllocatorInstance->GetHeaderSize());
+		return static_cast<ElementType&>(*reinterpret_cast<ElementType*>(ptrElementAddress));
 	}
 
 	template <class ComporationType>
-	FORCE_INLINE bool Contains(const ComporationType& Item) const
+	FORCE_INLINE bool Contains(const ComporationType& Item)
 	{
-		for (const ElementType* __restrict Data = GetData(), *__restrict DataEnd = Data + mNum; Data != DataEnd; ++Data)
+		for (ElementType* Data = GetData(), *DataEnd = GetLast(); Data != DataEnd; Next(Data))
 		{
 			if (*Data == Item)
 			{
@@ -138,21 +160,6 @@ public:
 		mNum = 0;
 	}
 
-private:
-	template <class IsPositiveInteger>
-	void RemoveByIndexImpl(size_t InIndex, IsPositiveInteger InCount)
-	{
-		CheckInvariants();
-
-		while (InCount)
-		{
-			mAllocatorInstance->Free(GetData() + InIndex);
-			--InCount;
-			++InIndex;
-		}
-	}
-
-public:
 	template <class IsPositiveInteger>
 	FORCE_INLINE void RemoveByindex(size_t InIndex)
 	{
@@ -163,7 +170,7 @@ public:
 	FORCE_INLINE size_t Find(const ElementType& InItem)
 	{
 		const ElementType* __restrict lStart = GetData();
-		for (const ElementType* __restrict Data = GetData(), *__restrict DataEnd = Data + mNum; Data != DataEnd; ++Data)
+		for (ElementType* Data = GetData(), *DataEnd = GetLast(); Data != DataEnd; Next(Data))
 		{
 			if (*Data == InItem)
 			{
@@ -183,10 +190,40 @@ public:
 	{
 
 	}
-	
 
-	Iterator begin() { return Iterator(&GetData()[0]); }
-	Iterator end() { return Iterator(&GetData()[mMax]); }
+private:
+	template <class IsPositiveInteger>
+	void RemoveByIndexImpl(size_t InIndex, IsPositiveInteger InCount)
+	{
+		CheckInvariants();
+
+		while (InCount)
+		{
+			mAllocatorInstance->Free(GetData() + InIndex);
+			--InCount;
+			++InIndex;
+		}
+	}
+
+	FORCE_INLINE ElementType* GetLast() const
+	{
+		size_t lElementAddress = reinterpret_cast<size_t>(&GetData()[mMax]) + (mMax * mAllocatorInstance->GetHeaderSize());
+		return reinterpret_cast<ElementType*>(lElementAddress);
+	}
+
+	FORCE_INLINE ElementType* Next(ElementType* InElement) const
+	{
+		size_t lElementAddress = reinterpret_cast<size_t>(++InElement) + (mAllocatorInstance->GetHeaderSize());
+		return reinterpret_cast<ElementType*>(lElementAddress);
+	}
+
+public:
+	
+	Iterator begin() { return Iterator(&GetData()[0], mAllocatorInstance->GetHeaderSize()); }
+	Iterator end() {
+
+		return Iterator(GetLast(), mAllocatorInstance->GetHeaderSize());
+	}
 
 protected:
 	std::unique_ptr<Allocator> mAllocatorInstance;
