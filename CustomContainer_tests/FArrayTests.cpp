@@ -107,24 +107,31 @@ TEST(FArrayTests, FindTestAllocStructArray)
 
 TEST(FArrayTests, ClearAllTestAllocStructArray)
 {
-	//FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
-	//TestAllocStruct* lStartPtr = ptrTestAllocStructFArray.GetData();
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	ptrTestAllocStructFArray.Emplace(i, 1.1f, true, "B", std::string(255, 'B'));
-	//}
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	TestAllocStruct* lStartPtr = ptrTestAllocStructFArray.GetData();
+	for (int i = 0; i < 10; ++i)
+	{
+		ptrTestAllocStructFArray.Emplace(i, 1.1f, true, "B", std::string(255, 'B'));
+	}
 
-	//EXPECT_NE(lStartPtr, ptrTestAllocStructFArray.GetData());
-	//ptrTestAllocStructFArray.ClearAll();
-	//EXPECT_EQ(ptrTestAllocStructFArray.Num(), 0);
-	//EXPECT_EQ(lStartPtr, ptrTestAllocStructFArray.GetData());
+	EXPECT_NE(lStartPtr, &ptrTestAllocStructFArray[ptrTestAllocStructFArray.Num()]);
+	ptrTestAllocStructFArray.ClearAll();
+	EXPECT_EQ(ptrTestAllocStructFArray.Num(), 0);
+	EXPECT_EQ(lStartPtr, &ptrTestAllocStructFArray[ptrTestAllocStructFArray.Num()]);
 }
 
 TEST(FArrayTests, RemoveByindexTestAllocStructArray)
 {
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	TestAllocStruct* lStartPtr = ptrTestAllocStructFArray.GetData();
+	for (int i = 0; i < 10; ++i)
+	{
+		ptrTestAllocStructFArray.Emplace(i, 1.1f, true, "B", std::string(255, 'B'));
+	}
+
+	ptrTestAllocStructFArray.RemoveByindex<size_t>(static_cast<size_t>(1));
+	EXPECT_EQ(ptrTestAllocStructFArray.Num(), 0);
 }
-
-
 
 TEST(FArrayTests, SortAllocStructArray)
 {

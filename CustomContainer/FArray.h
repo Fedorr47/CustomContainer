@@ -199,7 +199,7 @@ private:
 
 		while (InCount)
 		{
-			mAllocatorInstance->Free(GetData() + InIndex);
+			mAllocatorInstance->Free(GetByIndex(InIndex));
 			--InCount;
 			++InIndex;
 		}
@@ -211,9 +211,15 @@ private:
 		return reinterpret_cast<ElementType*>(lElementAddress);
 	}
 
-	FORCE_INLINE ElementType* Next(ElementType* InElement) const
+	FORCE_INLINE void Next(ElementType*& InElement) const
 	{
 		size_t lElementAddress = reinterpret_cast<size_t>(++InElement) + (mAllocatorInstance->GetHeaderSize());
+		InElement = reinterpret_cast<ElementType*>(lElementAddress);
+	}
+
+	FORCE_INLINE ElementType* GetByIndex(size_t InIndex) const
+	{
+		size_t lElementAddress = reinterpret_cast<size_t>(&GetData()[InIndex]) + (mAllocatorInstance->GetHeaderSize() * InIndex);
 		return reinterpret_cast<ElementType*>(lElementAddress);
 	}
 
