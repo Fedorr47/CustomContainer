@@ -19,7 +19,6 @@ public:
 	void Init() {};
 
 protected:
-
 	size_t mTotalAllocSize;
 	size_t mUsed;
 	size_t mPeak;
