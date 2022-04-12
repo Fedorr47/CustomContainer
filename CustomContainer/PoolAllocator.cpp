@@ -40,7 +40,7 @@ void* PoolAllocator::GetRawData() const
 
 void* PoolAllocator::Allocate(const size_t InAllocSize, const size_t InAligment)
 {
-	assert(InAllocSize == this->mChunckSize && "Allocation size must be equal to chunk size");
+	assert(InAllocSize == mChunckSize && "Allocation size must be equal to chunk size");
 
 	Node* pFreePosition = mFreeBlocksList.pop();
 

@@ -8,9 +8,17 @@ TEST(FArrayTests, InitIntArray)
 	EXPECT_EQ(ptrIntFArray.GetOffset(), 10);
 }
 
+TEST(FArrayTests, InitTestallocStructArray)
+{
+	int lArraySize = 10;
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(lArraySize);
+	EXPECT_EQ(ptrTestAllocStructFArray.GetOffset(), lArraySize);
+}
+
 TEST(FArrayTests, EmplaceTestAllocStructArray)
 {
-	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
+	int lArraySize = 10;
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(lArraySize);
 	ptrTestAllocStructFArray.Emplace();
 	auto res = ptrTestAllocStructFArray[0];
 	EXPECT_EQ(res.BoolValue, true);
@@ -21,8 +29,10 @@ TEST(FArrayTests, EmplaceTestAllocStructArray)
 
 TEST(FArrayTests, IteratorTestAllocStructArray)
 {
-	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(10);
-	for (int i = 0; i < 10; ++i)
+	int lArraySize = 2;
+	FArray<TestAllocStruct, PoolAllocator> ptrTestAllocStructFArray(lArraySize);
+
+	for (int i = 0; i < lArraySize; ++i)
 	{
 		ptrTestAllocStructFArray.Emplace();
 	}

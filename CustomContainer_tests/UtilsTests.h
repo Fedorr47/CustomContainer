@@ -4,7 +4,7 @@
 
 struct TestAllocStruct
 {
-	int IntegerValue;
+	int  IntegerValue;
 	float FloatValue;
 	bool BoolValue;
 	std::string ShortString;

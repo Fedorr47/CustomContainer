@@ -212,12 +212,6 @@ private:
 		return reinterpret_cast<ElementType*>(GetData(mMax));
 	}
 
-	FORCE_INLINE void Next(ElementType*& InElement) const
-	{
-		size_t lElementAddress = reinterpret_cast<size_t>(++InElement) + (mAllocatorInstance->GetHeaderSize());
-		InElement = reinterpret_cast<ElementType*>(lElementAddress);
-	}
-
 	FORCE_INLINE ElementType* GetByIndex(size_t InIndex) const
 	{
 		return reinterpret_cast<ElementType*>(GetData(InIndex));

@@ -24,6 +24,7 @@ public:
 	void Init() override {};
 	void* Allocate(const size_t InAllocSize, const size_t InAligment) override;
 	void Free(void* InPointer) override;
+
 	void* GetData(const size_t InIndex) const override;
 	virtual void* GetRawData() const override;
 

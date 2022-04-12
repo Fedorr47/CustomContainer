@@ -3,9 +3,13 @@
 #include "StackAllocator.h"
 #include "FArray.h"
 
+#include <vector>
+
 int main()
 {
-	PoolAllocator poolAllocator(100);
-	poolAllocator.Init<int>();
+	FArray<int, PoolAllocator> a(10);
+
+	std::vector<char> VecTest(10, 'a');
+	auto res = VecTest[0];
 	return 0;
 }

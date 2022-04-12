@@ -10,7 +10,7 @@ public:
 		Node* next;
 		Node* prev;
 	};
-
+	
 	Node* head = nullptr;
 	Node* tail = nullptr;
 	
@@ -35,6 +35,10 @@ public:
 	{
 		Node* top = head;
 		head = head->next;
+		if (head == nullptr)
+		{
+			tail = nullptr;
+		}
 		return top;
 	}
 private:
