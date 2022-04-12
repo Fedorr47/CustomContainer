@@ -15,14 +15,17 @@ protected:
 	using Node = StackLinkedList<FreeHeader>::Node;
 	StackLinkedList<FreeHeader> mFreeBlocksList;	
 
+	void Reset();
+
 public:
 	PoolAllocator(const size_t InTotalAllocSize);
 	virtual ~PoolAllocator();
 
+	void Init() override {};
 	void* Allocate(const size_t InAllocSize, const size_t InAligment) override;
 	void Free(void* InPointer) override;
-	void Init() override {};
-	void* GetData() override;
+	void* GetData(const size_t InIndex) const override;
+	virtual void* GetRawData() const override;
 
 	template <class ChunckType>
 	void Init()
@@ -36,5 +39,4 @@ public:
 		mStartPointer = malloc(mTotalAllocSize);
 		Reset();
 	}
-	void Reset();
 };

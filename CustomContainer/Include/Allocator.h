@@ -12,10 +12,14 @@ public:
 
 	virtual void* Allocate(const size_t InAllocSize, const size_t InAligment = 0) = 0;
 	virtual void Free(void* InPointer) = 0;
+	virtual void* GetRawData() const = 0;
+	virtual void* GetData(const size_t InIndex) const = 0;
 	virtual void Init() = 0;
-	virtual void* GetData() = 0;
+	template <class T = void>
+	void Init() {};
 
 protected:
+
 	size_t mTotalAllocSize;
 	size_t mUsed;
 	size_t mPeak;

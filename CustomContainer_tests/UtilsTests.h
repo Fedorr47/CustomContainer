@@ -16,7 +16,8 @@ struct TestAllocStruct
 		BoolValue{ true },
 		ShortString{ "A" }
 	{
-		LongString = std::string(255, 'A');
+		//LongString = std::string(255, 'A');
+		LongString = std::string(1, 'A');
 	}
 
 	TestAllocStruct(
@@ -34,3 +35,12 @@ struct TestAllocStruct
 		LongString = InLongString;
 	}
 };
+
+constexpr bool operator==(const TestAllocStruct& lhs, const TestAllocStruct& rhs)
+{
+	return  lhs.IntegerValue == rhs.IntegerValue &&
+		lhs.FloatValue == rhs.FloatValue &&
+		lhs.BoolValue == rhs.BoolValue &&
+		lhs.ShortString == rhs.ShortString &&
+		lhs.LongString == rhs.LongString;
+}

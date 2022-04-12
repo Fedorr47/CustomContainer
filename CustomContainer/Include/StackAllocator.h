@@ -47,6 +47,8 @@ protected:
 		char mPadding;
 	};
 
+	void Reset();
+
 public:
 	explicit StackAllocator(const size_t InTotalAllocSize);
 	virtual ~StackAllocator();
@@ -54,6 +56,6 @@ public:
 	void* Allocate(const size_t InAllocSize, const size_t InAligment) override;
 	void Free(void* InPointer) override;
 	void Init() override;
-	void* GetData() override { return reinterpret_cast<void*>(reinterpret_cast<size_t>(mStartPointer) + mOffset); };
-	void Reset();
+	virtual void* GetRawData() const override { return mStartPointer; };
+	void* GetData(const size_t InIndex) const override { return reinterpret_cast<void*>(reinterpret_cast<size_t>(mStartPointer) + mOffset); };
 };

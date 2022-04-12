@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <algorithm>
 
-#include "PoolAllocator.h"
+#include "Include/PoolAllocator.h"
 
 PoolAllocator::PoolAllocator(const size_t InTotalAllocSize) :
 	Allocator{ InTotalAllocSize },
@@ -21,15 +21,21 @@ PoolAllocator::~PoolAllocator()
 	}
 }
 
-void* PoolAllocator::GetData()
+void* PoolAllocator::GetData(const size_t InIndex) const
 {
 	void* lCurrentPointer = mStartPointer;
+	const size_t ChunckWithTitleSize = mChunckSize + sizeof(Node);
 	if (lCurrentPointer != nullptr)
 	{
-		size_t lCurrentPointerInt = reinterpret_cast<size_t>(lCurrentPointer) + mUsed;
+		size_t lCurrentPointerInt = reinterpret_cast<size_t>(lCurrentPointer) + (InIndex * ChunckWithTitleSize) + sizeof(Node);
 		lCurrentPointer = reinterpret_cast<void*>(lCurrentPointerInt);
 	}
 	return lCurrentPointer;
+}
+
+void* PoolAllocator::GetRawData() const
+{
+	return mStartPointer;
 }
 
 void* PoolAllocator::Allocate(const size_t InAllocSize, const size_t InAligment)
@@ -43,7 +49,8 @@ void* PoolAllocator::Allocate(const size_t InAllocSize, const size_t InAligment)
 	mUsed += mChunckSize;
 	mPeak = max(mPeak, mUsed);
 
-	return reinterpret_cast<void*>(pFreePosition);
+	size_t AddressAfterNode = reinterpret_cast<size_t>(pFreePosition) + sizeof(Node);
+	return reinterpret_cast<void*>(AddressAfterNode);
 }
 
 void PoolAllocator::Free(void* InPointer)
@@ -55,11 +62,14 @@ void PoolAllocator::Free(void* InPointer)
 void PoolAllocator::Reset()
 {
 	mUsed = mPeak = 0;
-	const size_t ChunksCount = mTotalAllocSize / (mChunckSize + sizeof(Node));
+	const size_t ChunckWithTitleSize = mChunckSize + sizeof(Node);
+	const size_t ChunksCount = mTotalAllocSize / ChunckWithTitleSize;
+	Node* node;
 	for (int i = 0; i < ChunksCount; ++i)
 	{
-		size_t lAddress = reinterpret_cast<size_t>(mStartPointer) + (i * mChunckSize);
-		mFreeBlocksList.push(reinterpret_cast<Node*>(lAddress));
+		void* lAddress = reinterpret_cast<void*>(reinterpret_cast<size_t>(mStartPointer) + (i * ChunckWithTitleSize));
+		node = new(lAddress) Node;
+		mFreeBlocksList.push(node);
 	}
 }
 

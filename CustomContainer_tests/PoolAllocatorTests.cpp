@@ -3,14 +3,14 @@
 #include "PoolAllocatorTests.h"
 
 TEST(PoolAllocatorTests, CreatePoolAllocator) {
-	PoolAllocator tStacAllocator(8);
-	tStacAllocator.Init<int>();
-	int* ptrStartPointer = reinterpret_cast<int*>(tStacAllocator.GetData());
+	PoolAllocator tPoolAllocator(8);
+	tPoolAllocator.Init<int>();
+	int* ptrStartPointer = reinterpret_cast<int*>(tPoolAllocator.GetData(0));
 	EXPECT_TRUE(ptrStartPointer != nullptr);
 }
 
 TEST_F(TestPoolAllocator, Allocate) {
-	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData());
+	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData(0));
 	EXPECT_TRUE(ptrStartPointer != nullptr);
 	void* ptrVoidAllocated = ptrPoolAllocator->Allocate(sizeof(TestAllocStruct), 0);
 	int* ptrAllocated = reinterpret_cast<int*>(ptrVoidAllocated);
@@ -24,7 +24,7 @@ TEST_F(TestPoolAllocator, Allocate) {
 }
 
 TEST_F(TestPoolAllocator, AllocateFour) {
-	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData());
+	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData(0));
 
 	std::vector<int> vAllocateIndexes(4);
 	std::generate(vAllocateIndexes.begin(), vAllocateIndexes.end(), [n = 0]() mutable { return ++n; });
@@ -46,7 +46,7 @@ TEST_F(TestPoolAllocator, AllocateFour) {
 }
 
 TEST_F(TestPoolAllocator, Free) {
-	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData());
+	int* ptrStartPointer = reinterpret_cast<int*>(ptrPoolAllocator->GetData(0));
 	void* ptrVoidAllocated = ptrPoolAllocator->Allocate(sizeof(TestAllocStruct), 0);
 	int* ptrAllocated = reinterpret_cast<int*>(ptrVoidAllocated);
 	new(ptrAllocated) TestAllocStruct();

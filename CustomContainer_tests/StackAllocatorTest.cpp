@@ -5,12 +5,12 @@
 TEST(StackAllocatorTests, CreateStackAllocator) {
 	StackAllocator tStacAllocator(100);
 	tStacAllocator.Init();
-	int* ptrStartPointer = reinterpret_cast<int*>(tStacAllocator.GetData());
+	int* ptrStartPointer = reinterpret_cast<int*>(tStacAllocator.GetData(0));
 	EXPECT_TRUE(ptrStartPointer != nullptr);
 }
 
 TEST_F(TestStackAllocator, Allocate) {
-	int* ptrStartPointer = reinterpret_cast<int*>(ptrStackAllocator->GetData());
+	int* ptrStartPointer = reinterpret_cast<int*>(ptrStackAllocator->GetData(0));
 	EXPECT_TRUE(ptrStartPointer != nullptr);
 	void* ptrVoidAllocated = ptrStackAllocator->Allocate(sizeof(TestAllocStruct), 0);
 	int* ptrAllocated = reinterpret_cast<int*>(ptrVoidAllocated);
@@ -22,4 +22,5 @@ TEST_F(TestStackAllocator, Allocate) {
 	EXPECT_EQ(ptrTestAllocStruct->BoolValue, true);
 	EXPECT_EQ(ptrTestAllocStruct->ShortString, "A");
 }
+
 

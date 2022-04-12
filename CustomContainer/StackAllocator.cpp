@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <algorithm>
 
-#include "StackAllocator.h"
+#include "Include/StackAllocator.h"
 
 StackAllocator::StackAllocator(const size_t InTotalAllocSize) :
 	Allocator{ InTotalAllocSize },

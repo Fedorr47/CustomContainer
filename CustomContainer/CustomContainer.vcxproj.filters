@@ -21,27 +21,24 @@
     <ClCompile Include="StackAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EntryPoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Allocator.h">
+    <ClInclude Include="Include\Allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PoolAllocator.h">
+    <ClInclude Include="Include\FArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StackAllocator.h">
+    <ClInclude Include="Include\PoolAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StackLinkedList.h">
+    <ClInclude Include="Include\StackAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FArray.h">
+    <ClInclude Include="Include\StackLinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="Include\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
